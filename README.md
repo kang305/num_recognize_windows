@@ -104,21 +104,39 @@ Remove-Item "$env:TEMP\libtorch.zip"
 
 # 方式 A：CLion
 
-CLion 自带 CMake 和 MinGW 编译器，不需要装 Visual Studio。
+CLion 是 JetBrains 的 C++ IDE，自带 CMake，图形界面操作友好。
+
+> **注意：** CLion 本身只是编辑器，仍需要安装 C++ 编译器（MSVC）。Python 只有在你需要重新训练模型时才需要装，正常编译运行不需要。
 
 ---
 
-### 步骤 A1：安装 CLion
+### 步骤 A1：安装 C++ 编译器（Visual Studio 2022 Build Tools）
+
+Qt 和 LibTorch 在 Windows 上需要 MSVC 编译器。
+
+打开 PowerShell，执行：
+
+```powershell
+winget install Microsoft.VisualStudio.2022.BuildTools --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended" --accept-source-agreements --accept-package-agreements
+```
+
+> 约 2-3GB，安装完成后 **重启电脑**。
+
+---
+
+### 步骤 A2：安装 CLion
 
 1. 打开：https://www.jetbrains.com/clion/download/
 2. 下载 Windows 安装包并运行
-3. 安装时勾选 **"Add to PATH"** 和 **"Associate .cpp files"**
+3. 安装时勾选 **"Add to PATH"**
 4. 没有授权的话，点击 **"Start Free Trial"**（免费试用 30 天）
-5. 在校学生可以申请免费教育授权：https://www.jetbrains.com/community/education/
+5. 在校学生可申请免费教育授权：https://www.jetbrains.com/community/education/
+
+首次启动 CLion 时会自动检测到已安装的 MSVC 编译器，无需额外配置。
 
 ---
 
-### 步骤 A2：安装 Qt 6
+### 步骤 A3：安装 Qt 6
 
 1. 打开：https://www.qt.io/download-open-source
 2. 往下滑，点击 **"Download the Qt Online Installer"**
@@ -126,50 +144,50 @@ CLion 自带 CMake 和 MinGW 编译器，不需要装 Visual Studio。
 4. 在组件选择界面：
    - 展开 **"Qt"** → 展开最新版本（如 6.5.0）
    - 勾选 **"MSVC 2019 64-bit"**
-   - 其他组件可以全部取消勾选以节省空间
-5. 点击安装（默认路径：`C:\Qt\`）
+   - 其他组件全部取消勾选以节省空间
+5. 安装（默认路径：`C:\Qt\`，约 2GB）
 
 ---
 
-### 步骤 A3：下载 LibTorch
+### 步骤 A4：下载 LibTorch
 
 1. 打开：https://pytorch.org/
 2. 依次选择：**Stable** → **Windows** → **LibTorch** → **C++ / Java** → **CPU**
 3. 点击 **"Download here (cxx11 ABI)"** 下载 zip 包
-4. 将 zip 解压到 `C:\libtorch`（解压后应包含 `include`、`lib`、`bin` 等文件夹）
+4. 将 zip 解压到 `C:\libtorch`（解压后应包含 `include`、`lib`、`bin` 文件夹）
 
 ---
 
-### 步骤 A4：用 CLion 打开项目
+### 步骤 A5：用 CLion 打开项目
 
-1. 点击本页面顶部的绿色 **"Code"** 按钮 → **"Download ZIP"**
+1. 点击本页面顶部绿色 **"Code"** 按钮 → **"Download ZIP"**
 2. 解压到任意文件夹（比如桌面）
 3. 启动 CLion，点击 **"Open"**，选择项目文件夹
-4. CLion 会自动检测到 `CMakeLists.txt`，弹出提示 **"Load CMake project?"** → 点击 **"Load"**
+4. CLion 检测到 `CMakeLists.txt`，弹出 **"Load CMake project?"** → 点击 **"Load"**
 
 ---
 
-### 步骤 A5：配置 CMake
+### 步骤 A6：配置 CMake
 
-告诉 CLion Qt 和 LibTorch 在哪里：
+告诉 CLion Qt 和 LibTorch 的安装位置：
 
-1. CLion 菜单：**File → Settings → Build, Execution, Deployment → CMake**
+1. 菜单：**File → Settings → Build, Execution, Deployment → CMake**
 2. 在 **"CMake options"** 输入框中粘贴：
    ```
    -DCMAKE_PREFIX_PATH=C:\libtorch;C:\Qt\6.5.0\msvc2019_64
    ```
-   如果 Qt 版本不同，修改对应路径即可。
+   如果 Qt 版本不同，修改路径中的版本号即可。
 
 3. 点击 **"Apply"** → **"OK"**
-4. CLion 会自动重新运行 CMake，等待底部状态栏显示 **"CMake generation finished"**
+4. 等待底部状态栏显示 **"CMake generation finished"**
 
 ---
 
-### 步骤 A6：编译运行
+### 步骤 A7：编译运行
 
 1. 点击工具栏的 **锤子图标**（或按 `Ctrl+F9`）编译
 2. 编译完成后，点击绿色的 **▶ 运行按钮**（或按 `Shift+F10`）
-3. 程序窗口打开 — **用鼠标在画布上写一个数字（0-9）**，点击"识别"按钮查看结果！
+3. 程序窗口打开 — **用鼠标写一个数字（0-9）**，点击"识别"按钮查看结果！
 
 > **提示：** 如果运行时提示找不到 Qt DLL，将 `C:\Qt\6.5.0\msvc2019_64\bin` 添加到系统 PATH 环境变量，然后重启 CLion。
 
@@ -281,10 +299,13 @@ num_recognize_windows/
 
 | 问题 | 解决方法 |
 |------|---------|
-| CMake 找不到 Qt | 确认 Qt 安装时勾选了 MSVC 2019 64-bit（或 MinGW 64-bit），可以用 Qt Maintenance Tool 补装 |
+| CMake 找不到 Qt | 确认 Qt 安装时勾选了 MSVC 2019 64-bit，可以用 Qt Maintenance Tool 补装 |
 | CMake 找不到 Torch | 确认 LibTorch 已解压到 `C:\libtorch`，且包含 `include`、`lib`、`bin` 文件夹 |
 | 程序启动后闪退 | 把 `mnist_cnn.pt` 复制到 exe 所在的同一文件夹 |
 | 提示 `no Qt platform plugin was initialized` | 将 `C:\Qt\6.x.x\msvc2019_64\bin` 添加到系统 PATH，或把 `platforms/qwindows.dll` 复制到 exe 旁边 |
 | 提示 `MSVCP140.dll 找不到` | 安装 VC++ 运行库：https://aka.ms/vs/17/release/vc_redist.x64.exe |
+| CLion：提示找不到 C++ 编译器 | 确认步骤 A1 已安装 VS Build Tools 且已重启电脑。在 CLion 中检查 **File → Settings → Build → Toolchains**，应自动检测到 Visual Studio |
 | CLion：CMake 生成失败 | 检查 Settings → CMake 中的 `CMAKE_PREFIX_PATH`，确保两段路径在磁盘上真实存在 |
 | CLion：运行按钮灰色不可点 | 等待底部状态栏 CMake 加载完成，如果卡住，点 **File → Reload CMake Project** |
+| CLion：编译报错 `error C3861` 等 MSVC 错误 | 确认 CLion 使用的 Toolchain 是 Visual Studio 而不是 MinGW：**File → Settings → Build → Toolchains**，将 Visual Studio 上移到第一位 |
+| 不会装 VS Build Tools / 命令行太复杂 | 直接用方式零的脚本 `setup_windows.ps1`，会自动搞定一切 |
