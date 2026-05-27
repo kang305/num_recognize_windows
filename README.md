@@ -1,208 +1,204 @@
-# Handwritten Digit Recognition System (Windows)
+# 手写数字识别系统（Windows 版）
 
-A deep learning-based handwritten digit recognition system built with **PyTorch (LibTorch)** and **Qt**, running on Windows.
+基于 **PyTorch (LibTorch)** 和 **Qt** 搭建的深度学习手写数字识别系统。
 
-Draw a digit on the canvas, and the CNN model will recognize it in real time.
-
----
-
-## Choose Your Setup Path
-
-| Path | Suitable For | Estimated Time |
-|------|-------------|----------------|
-| **[Path A: CLion](#path-a-clion-recommended)** | Most users, beginners, students | ~30 minutes |
-| **[Path B: Visual Studio + Command Line](#path-b-visual-studio--command-line)** | Users familiar with VS, or no CLion license | ~45 minutes |
-
-Both paths produce the same result. Pick one.
+在画布上用鼠标写一个数字，CNN 模型会实时识别出来。
 
 ---
 
-# Path A: CLion (Recommended)
+## 选择安装方式
 
-CLion bundles CMake and the MinGW compiler — no need to install Visual Studio.
+| 方式 | 适合人群 | 预计耗时 |
+|------|---------|---------|
+| **[方式 A：CLion（推荐）](#方式-aclion推荐)** | 大多数用户、初学者、学生 | 约 30 分钟 |
+| **[方式 B：Visual Studio + 命令行](#方式-bvisual-studio--命令行)** | 熟悉 VS 的用户，或没有 CLion 授权 | 约 45 分钟 |
 
----
-
-### Step A1: Install CLion
-
-1. Go to: https://www.jetbrains.com/clion/download/
-2. Download the Windows installer and run it
-3. During installation, check **"Add to PATH"** and **"Associate .cpp files"**
-4. If you don't have a license, click **"Start Free Trial"** (30 days) — students can apply for a free educational license at https://www.jetbrains.com/community/education/
+两种方式结果一样，选一种即可。
 
 ---
 
-### Step A2: Install Qt 6
+# 方式 A：CLion（推荐）
 
-1. Go to: https://www.qt.io/download-open-source
-2. Scroll down and click **"Download the Qt Online Installer"**
-3. Run the installer, sign up / log in (free)
-4. In the component selection screen:
-   - Under **"Qt"**, expand the latest version (e.g., 6.5.0)
-   - Check **"MSVC 2019 64-bit"**  (CLion can use MSVC toolchain)
-   - Or if you prefer MinGW: check **"MinGW 64-bit"**
-5. Install (default path: `C:\Qt\`)
+CLion 自带 CMake 和 MinGW 编译器，不需要装 Visual Studio。
 
 ---
 
-### Step A3: Download LibTorch
+### 步骤 A1：安装 CLion
 
-1. Go to: https://pytorch.org/
-2. Under "PyTorch Build": **Stable**
-3. Under "Your OS": **Windows**
-4. Under "Package": **LibTorch**
-5. Under "Compute Platform": **CPU**
-6. Click **"Download here (cxx11 ABI)"**
-7. Extract the zip to `C:\libtorch` (so you have `C:\libtorch\include`, `C:\libtorch\lib`, etc.)
+1. 打开：https://www.jetbrains.com/clion/download/
+2. 下载 Windows 安装包并运行
+3. 安装时勾选 **"Add to PATH"** 和 **"Associate .cpp files"**
+4. 没有授权的话，点击 **"Start Free Trial"**（免费试用 30 天）
+5. 在校学生可以申请免费教育授权：https://www.jetbrains.com/community/education/
 
 ---
 
-### Step A4: Open Project in CLion
+### 步骤 A2：安装 Qt 6
 
-1. Click the green **"Code"** button on this page → **"Download ZIP"**
-2. Extract to a folder of your choice (e.g., Desktop)
-3. Launch CLion, click **"Open"**, select the project folder
-4. CLion will detect `CMakeLists.txt` — a notification appears: **"Load CMake project?"** → click **"Load"**
+1. 打开：https://www.qt.io/download-open-source
+2. 往下滑，点击 **"Download the Qt Online Installer"**
+3. 运行安装器，注册/登录 Qt 账号（免费）
+4. 在组件选择界面：
+   - 展开 **"Qt"** → 展开最新版本（如 6.5.0）
+   - 勾选 **"MSVC 2019 64-bit"**
+   - 其他组件可以全部取消勾选以节省空间
+5. 点击安装（默认路径：`C:\Qt\`）
 
 ---
 
-### Step A5: Configure CMake in CLion
+### 步骤 A3：下载 LibTorch
 
-CLion needs to know where Qt and LibTorch are. Set the `CMAKE_PREFIX_PATH`:
+1. 打开：https://pytorch.org/
+2. 依次选择：**Stable** → **Windows** → **LibTorch** → **C++ / Java** → **CPU**
+3. 点击 **"Download here (cxx11 ABI)"** 下载 zip 包
+4. 将 zip 解压到 `C:\libtorch`（解压后应包含 `include`、`lib`、`bin` 等文件夹）
 
-1. In CLion, go to **File → Settings → Build, Execution, Deployment → CMake**
-2. In the **"CMake options"** field, paste:
+---
+
+### 步骤 A4：用 CLion 打开项目
+
+1. 点击本页面顶部的绿色 **"Code"** 按钮 → **"Download ZIP"**
+2. 解压到任意文件夹（比如桌面）
+3. 启动 CLion，点击 **"Open"**，选择项目文件夹
+4. CLion 会自动检测到 `CMakeLists.txt`，弹出提示 **"Load CMake project?"** → 点击 **"Load"**
+
+---
+
+### 步骤 A5：配置 CMake
+
+告诉 CLion Qt 和 LibTorch 在哪里：
+
+1. CLion 菜单：**File → Settings → Build, Execution, Deployment → CMake**
+2. 在 **"CMake options"** 输入框中粘贴：
    ```
    -DCMAKE_PREFIX_PATH=C:\libtorch;C:\Qt\6.5.0\msvc2019_64
    ```
-   Adjust the Qt path if your version is different.
+   如果 Qt 版本不同，修改对应路径即可。
 
-3. Click **"Apply"** → **"OK"**
-4. CLion will automatically re-run CMake — wait for **"CMake generation finished"** in the bottom status bar
-
----
-
-### Step A6: Build & Run
-
-1. Click the green **▶ hammer icon** (or press `Ctrl+F9`) to build
-2. After build completes, click the green **▶ Run button** (or press `Shift+F10`)
-3. The app window opens — **draw a digit (0-9) with your mouse**, click "识别 (Recognize)" to see the prediction!
-
-> **Note:** On first run, if the exe can't find Qt DLLs, add `C:\Qt\6.5.0\msvc2019_64\bin` to your system PATH, then restart CLion.
+3. 点击 **"Apply"** → **"OK"**
+4. CLion 会自动重新运行 CMake，等待底部状态栏显示 **"CMake generation finished"**
 
 ---
 
-# Path B: Visual Studio + Command Line
+### 步骤 A6：编译运行
+
+1. 点击工具栏的 **锤子图标**（或按 `Ctrl+F9`）编译
+2. 编译完成后，点击绿色的 **▶ 运行按钮**（或按 `Shift+F10`）
+3. 程序窗口打开 — **用鼠标在画布上写一个数字（0-9）**，点击"识别"按钮查看结果！
+
+> **提示：** 如果运行时提示找不到 Qt DLL，将 `C:\Qt\6.5.0\msvc2019_64\bin` 添加到系统 PATH 环境变量，然后重启 CLion。
 
 ---
 
-### Step B1: Install Visual Studio 2022 (C++ Compiler)
-
-1. Go to: https://visualstudio.microsoft.com/downloads/
-2. Scroll to **"Visual Studio 2022"** → click **"Community"** (free)
-3. In the installer, check **"Desktop development with C++"**
-4. Click **"Install"** (~10-20 minutes), then **restart your computer**
+# 方式 B：Visual Studio + 命令行
 
 ---
 
-### Step B2: Install Qt 6
+### 步骤 B1：安装 Visual Studio 2022
 
-Same as Path A Step A2. Make sure to check **"MSVC 2019 64-bit"**.
-
----
-
-### Step B3: Download LibTorch
-
-Same as Path A Step A3. Extract to `C:\libtorch`.
+1. 打开：https://visualstudio.microsoft.com/zh-hans/downloads/
+2. 找到 **"Visual Studio 2022"** → 点击 **"Community"**（免费）
+3. 在安装器中勾选 **"使用 C++ 的桌面开发"**
+4. 点击安装（约 10-20 分钟），完成后 **重启电脑**
 
 ---
 
-### Step B4: Download This Project
+### 步骤 B2：安装 Qt 6
 
-1. Click the green **"Code"** button at the top → **"Download ZIP"**
-2. Extract to your Desktop or any folder
+同方式 A 的步骤 A2。注意勾选 **"MSVC 2019 64-bit"**。
 
 ---
 
-### Step B5: Build the Project
+### 步骤 B3：下载 LibTorch
 
-1. Open **"Developer Command Prompt for VS 2022"** from the Start Menu
-2. Navigate to the project folder:
+同方式 A 的步骤 A3。解压到 `C:\libtorch`。
+
+---
+
+### 步骤 B4：下载本项目
+
+1. 点击页面顶部绿色 **"Code"** 按钮 → **"Download ZIP"**
+2. 解压到桌面或任意文件夹
+
+---
+
+### 步骤 B5：编译项目
+
+1. 从开始菜单打开 **"Developer Command Prompt for VS 2022"**
+2. 进入项目文件夹：
    ```
-   cd C:\Users\<YourName>\Desktop\num_recognize_windows
+   cd C:\Users\<你的用户名>\Desktop\num_recognize_windows
    ```
-3. Run the build script:
+3. 运行构建脚本（根据实际版本调整 Qt 路径）：
    ```
    build_windows.bat "C:\libtorch" "C:\Qt\6.5.0\msvc2019_64"
    ```
-   Adjust the Qt version and MSVC path as needed.
-
-4. When you see **"Build successful!"**, compilation is done.
+4. 看到 **"Build successful!"** 即编译完成
 
 ---
 
-### Step B6: Run the App
+### 步骤 B6：运行程序
 
-1. Navigate to the output:
+1. 进入输出目录：
    ```
    cd build\Release
    ```
-2. Double-click `num_recognize.exe`, or run:
+2. 双击 `num_recognize.exe`，或在命令行运行：
    ```
    num_recognize.exe
    ```
-3. The app window opens — draw a digit, click "识别 (Recognize)"!
+3. 程序窗口打开 — 用鼠标画数字，点击"识别"！
 
 ---
 
-## Project Structure
+## 项目结构
 
 ```
 num_recognize_windows/
-├── main.cpp              # Qt application entry point
-├── mainwindow.h/cpp      # Main window UI + recognition logic
-├── canvaswidget.h/cpp    # Drawing canvas widget
-├── recognizer.h/cpp       # CNN model inference (LibTorch)
-├── train_model.py         # Python script to train the CNN model
-├── mnist_cnn.pt          # Pre-trained TorchScript model (28x28 grayscale → 0-9)
-├── CMakeLists.txt         # CMake build configuration
-├── build_windows.bat     # Windows command-line build script
+├── main.cpp              # Qt 程序入口
+├── mainwindow.h/cpp      # 主窗口界面 + 识别逻辑
+├── canvaswidget.h/cpp    # 手写画布控件
+├── recognizer.h/cpp       # CNN 模型推理（LibTorch）
+├── train_model.py         # 训练模型的 Python 脚本
+├── mnist_cnn.pt          # 已训练好的 TorchScript 模型
+├── CMakeLists.txt         # CMake 构建配置
+├── build_windows.bat     # Windows 命令行一键构建脚本
 └── .gitignore
 ```
 
-## Training Your Own Model (Optional)
+## 自己训练模型（可选）
 
-The project includes a pre-trained model (`mnist_cnn.pt`). To retrain:
+项目中已包含训练好的模型 `mnist_cnn.pt`。如果你想重新训练：
 
-1. Install Python 3.8+
-2. Install dependencies:
+1. 安装 Python 3.8 及以上版本
+2. 安装依赖：
    ```
    pip install torch torchvision
    ```
-3. Run:
+3. 运行训练脚本：
    ```
    python train_model.py
    ```
-4. This downloads the MNIST dataset, trains for 7 epochs, and generates `mnist_cnn.pt`
-5. Copy the new `.pt` file to the project root to replace the existing one
+4. 脚本会自动下载 MNIST 数据集，训练 7 轮，生成新的 `mnist_cnn.pt`
+5. 将新的 `.pt` 文件覆盖项目根目录下的旧文件即可
 
-## Notes
+## 说明
 
-- **Model accuracy**: ~98-99% on MNIST test set
-- **Input**: 28x28 grayscale image (auto-resized from canvas)
-- **Model**: Simple CNN (Conv2d → ReLU → Conv2d → ReLU → MaxPool → FC → FC)
-- TorchScript model is cross-platform — the same `.pt` file works on Windows, Mac, and Linux
+- **模型准确率**：在 MNIST 测试集上约 98-99%
+- **输入**：28×28 灰度图（画布自动缩放）
+- **网络结构**：Conv2d → ReLU → Conv2d → ReLU → MaxPool → FC → FC
+- TorchScript 模型跨平台，同一个 `.pt` 文件在 Windows、Mac、Linux 上通用
 
 ---
 
-## Troubleshooting
+## 常见问题
 
-| Problem | Solution |
-|---------|----------|
-| CMake can't find Qt | Make sure MSVC 2019 64-bit (or MinGW 64-bit) is checked in Qt installer. Re-run Qt Maintenance Tool to add it. |
-| CMake can't find Torch | Verify LibTorch is extracted to `C:\libtorch` and contains `include/`, `lib/`, `bin/` folders. |
-| `num_recognize.exe` crashes on start | Make sure `mnist_cnn.pt` is in the same folder as the exe. |
-| `no Qt platform plugin was initialized` | Add `C:\Qt\6.x.x\msvc2019_64\bin` to your PATH, or copy `platforms/qwindows.dll` next to the exe. |
-| `MSVCP140.dll not found` | Install Visual C++ Redistributable from: https://aka.ms/vs/17/release/vc_redist.x64.exe |
-| CLion: CMake generation failed | Double-check the `CMAKE_PREFIX_PATH` in Settings → CMake — both paths must exist on disk. |
-| CLion: Run button grayed out | Wait for CMake to finish loading (check the bottom status bar). If stuck, click **File → Reload CMake Project**. |
+| 问题 | 解决方法 |
+|------|---------|
+| CMake 找不到 Qt | 确认 Qt 安装时勾选了 MSVC 2019 64-bit（或 MinGW 64-bit），可以用 Qt Maintenance Tool 补装 |
+| CMake 找不到 Torch | 确认 LibTorch 已解压到 `C:\libtorch`，且包含 `include`、`lib`、`bin` 文件夹 |
+| 程序启动后闪退 | 把 `mnist_cnn.pt` 复制到 exe 所在的同一文件夹 |
+| 提示 `no Qt platform plugin was initialized` | 将 `C:\Qt\6.x.x\msvc2019_64\bin` 添加到系统 PATH，或把 `platforms/qwindows.dll` 复制到 exe 旁边 |
+| 提示 `MSVCP140.dll 找不到` | 安装 VC++ 运行库：https://aka.ms/vs/17/release/vc_redist.x64.exe |
+| CLion：CMake 生成失败 | 检查 Settings → CMake 中的 `CMAKE_PREFIX_PATH`，确保两段路径在磁盘上真实存在 |
+| CLion：运行按钮灰色不可点 | 等待底部状态栏 CMake 加载完成，如果卡住，点 **File → Reload CMake Project** |
