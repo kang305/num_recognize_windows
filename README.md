@@ -10,14 +10,74 @@
 
 | 方式 | 适合人群 | 预计耗时 |
 |------|---------|---------|
-| **[方式 A：CLion（推荐）](#方式-aclion推荐)** | 大多数用户、初学者、学生 | 约 30 分钟 |
-| **[方式 B：Visual Studio + 命令行](#方式-bvisual-studio--命令行)** | 熟悉 VS 的用户，或没有 CLion 授权 | 约 45 分钟 |
+| **[方式零：一键脚本（最快）](#方式零一键脚本推荐)** | 不想手动操作、喜欢命令行 | 约 15 分钟 |
+| **[方式 A：CLion](#方式-aclion)** | 想要 IDE 图形界面、学生 | 约 30 分钟 |
+| **[方式 B：Visual Studio + 命令行](#方式-bvisual-studio--命令行)** | 熟悉 VS，或没有 CLion 授权 | 约 45 分钟 |
 
-两种方式结果一样，选一种即可。
+三种方式结果一样，选一种即可。
 
 ---
 
-# 方式 A：CLion（推荐）
+# 方式零：一键脚本（推荐）
+
+项目自带 `setup_windows.ps1`，在终端里跑一次就能装好全部环境。
+
+> **适用系统：** Windows 10/11（自带 winget）
+
+---
+
+### 步骤 01：下载项目并运行脚本
+
+1. 点击页面顶部绿色 **"Code"** 按钮 → **"Download ZIP"**，解压到任意文件夹
+2. 在项目文件夹中，右键 `setup_windows.ps1` → **"使用 PowerShell 运行"**
+3. 输入 `y` 确认，等待完成
+4. 如果中途提示重启电脑，重启后重新运行脚本
+
+脚本会自动安装：
+- Visual Studio 2022 Build Tools（MSVC 编译器）
+- CMake（构建工具）
+- Qt 6.5.0（GUI 框架）
+- LibTorch 2.5.1（推理库）
+- Git（版本管理）
+
+---
+
+### 步骤 02：编译运行
+
+环境装好后，在项目目录下打开终端：
+
+```powershell
+.\build_windows.bat "C:\libtorch" "C:\Qt\6.5.0\msvc2019_64"
+cd build\Release
+.\num_recognize.exe
+```
+
+---
+
+### 手动逐条安装（不用脚本）
+
+如果你只想装其中某几个组件，下面是每条对应的终端命令：
+
+```powershell
+# 1. MSVC 编译器
+winget install Microsoft.VisualStudio.2022.BuildTools --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+
+# 2. CMake
+winget install Kitware.CMake
+
+# 3. Qt 6.5.0 (需要先装 Python)
+winget install Python.Python.3.12
+pip install aqtinstall
+aqt install-qt windows desktop 6.5.0 win64_msvc2019_64 --outputdir C:\Qt
+
+# 4. LibTorch (下载并解压)
+Invoke-WebRequest -Uri "https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-2.5.1%2Bcpu.zip" -OutFile "$env:TEMP\libtorch.zip"
+Expand-Archive -Path "$env:TEMP\libtorch.zip" -DestinationPath "C:\" -Force
+```
+
+---
+
+# 方式 A：CLion
 
 CLion 自带 CMake 和 MinGW 编译器，不需要装 Visual Studio。
 
@@ -163,6 +223,7 @@ num_recognize_windows/
 ├── mnist_cnn.pt          # 已训练好的 TorchScript 模型
 ├── CMakeLists.txt         # CMake 构建配置
 ├── build_windows.bat     # Windows 命令行一键构建脚本
+├── setup_windows.ps1     # Windows 环境一键配置脚本
 └── .gitignore
 ```
 
