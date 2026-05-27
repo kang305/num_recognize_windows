@@ -20,59 +20,84 @@
 
 # 方式零：一键脚本（推荐）
 
-项目自带 `setup_windows.ps1`，在终端里跑一次就能装好全部环境。
+项目自带 `setup_windows.ps1`，**即使电脑什么都没装**，在终端里跑一次就能配好全部环境。
 
-> **适用系统：** Windows 10/11（自带 winget）
-
----
-
-### 步骤 01：下载项目并运行脚本
-
-1. 点击页面顶部绿色 **"Code"** 按钮 → **"Download ZIP"**，解压到任意文件夹
-2. 在项目文件夹中，右键 `setup_windows.ps1` → **"使用 PowerShell 运行"**
-3. 输入 `y` 确认，等待完成
-4. 如果中途提示重启电脑，重启后重新运行脚本
-
-脚本会自动安装：
-- Visual Studio 2022 Build Tools（MSVC 编译器）
-- CMake（构建工具）
-- Qt 6.5.0（GUI 框架）
-- LibTorch 2.5.1（推理库）
-- Git（版本管理）
+> **适用系统：** Windows 10/11（自带 winget，无需额外安装）
+> **前提条件：** 无。脚本会从零安装一切，包括 Python。
 
 ---
 
-### 步骤 02：编译运行
+### 步骤 01：下载项目
 
-环境装好后，在项目目录下打开终端：
+1. 点击页面顶部绿色 **"Code"** 按钮 → **"Download ZIP"**
+2. 解压到任意文件夹（比如桌面）
+
+---
+
+### 步骤 02：运行一键配置脚本
+
+在项目文件夹中，右键 `setup_windows.ps1` → **"使用 PowerShell 运行"**，输入 `y` 确认。
+
+脚本会依次安装以下 6 个组件（已安装的自动跳过）：
+
+| 序号 | 组件 | 用途 |
+|------|------|------|
+| 1 | Python 3.12 | 运行 aqtinstall 装 Qt、训练模型 |
+| 2 | Git | 代码版本管理 |
+| 3 | VS 2022 Build Tools | MSVC C++ 编译器 |
+| 4 | CMake | C++ 项目构建 |
+| 5 | Qt 6.5.0 | 图形界面框架 |
+| 6 | LibTorch 2.5.1 | 深度学习模型推理 |
+
+> 如果中途提示重启电脑，重启后**再次运行脚本**即可（已装的会自动跳过，从断点继续）。
+
+---
+
+### 步骤 03：编译运行
+
+环境全部装好后，在项目目录下打开 PowerShell 或命令提示符：
 
 ```powershell
 .\build_windows.bat "C:\libtorch" "C:\Qt\6.5.0\msvc2019_64"
-cd build\Release
-.\num_recognize.exe
 ```
+
+看到 **"Build successful!"** 后：
+
+```powershell
+.\build\Release\num_recognize.exe
+```
+
+程序窗口打开，用鼠标写一个数字，点击"识别"即可。
 
 ---
 
-### 手动逐条安装（不用脚本）
+### 不想用脚本？手动逐条安装
 
-如果你只想装其中某几个组件，下面是每条对应的终端命令：
+打开 PowerShell，按顺序逐条执行：
 
 ```powershell
-# 1. MSVC 编译器
-winget install Microsoft.VisualStudio.2022.BuildTools --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+# 1. Python 3.12（必须最先装）
+winget install Python.Python.3.12 --accept-source-agreements --accept-package-agreements
 
-# 2. CMake
-winget install Kitware.CMake
+# 2. Git
+winget install Git.Git --accept-source-agreements --accept-package-agreements
 
-# 3. Qt 6.5.0 (需要先装 Python)
-winget install Python.Python.3.12
+# 3. MSVC 编译器（约 2-3GB，装完需重启电脑）
+winget install Microsoft.VisualStudio.2022.BuildTools --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended" --accept-source-agreements --accept-package-agreements
+
+# ---- 重启电脑 ----
+
+# 4. CMake
+winget install Kitware.CMake --accept-source-agreements --accept-package-agreements
+
+# 5. Qt 6.5.0（需要先装过 Python）
 pip install aqtinstall
 aqt install-qt windows desktop 6.5.0 win64_msvc2019_64 --outputdir C:\Qt
 
-# 4. LibTorch (下载并解压)
+# 6. LibTorch 2.5.1（下载约 2GB，自动解压到 C:\libtorch）
 Invoke-WebRequest -Uri "https://download.pytorch.org/libtorch/cpu/libtorch-win-shared-with-deps-2.5.1%2Bcpu.zip" -OutFile "$env:TEMP\libtorch.zip"
 Expand-Archive -Path "$env:TEMP\libtorch.zip" -DestinationPath "C:\" -Force
+Remove-Item "$env:TEMP\libtorch.zip"
 ```
 
 ---
